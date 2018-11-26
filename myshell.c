@@ -10,7 +10,7 @@
 void new_line(){
   char working_dir[PATH_MAX];
   getcwd(working_dir, sizeof(working_dir));
-  printf("\x1B[35m%s\x1B[36m|||\x1B[0m ", working_dir);
+  printf("\x1B[35m%s\x1B[36m |||\x1B[0m ", working_dir);
   // prints everything out
   fflush(stdout);
 }
@@ -24,6 +24,7 @@ static void sig_handler(int num){
 }
 
 int main(){
+
   // set sighandler
   signal(SIGINT, sig_handler);
 
