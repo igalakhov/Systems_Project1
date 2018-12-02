@@ -41,9 +41,11 @@ int main(){
     // get latest command
     command = get_current_command(command, &max_command_size);
 
-    //printf("what");
-    // clear spaces
+    // validate that input is valid
+
+    // clear spaces and trim
     clear_multiple_spaces(command);
+    trimstr(command);
 
     // build array of command strings
     parsed_arr = parse_commands(command);
