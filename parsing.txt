@@ -1,8 +1,0 @@
-How parsing is done
-0 - normal command
-1 - redirect <
-2 - redirect >
-3 - redirect #>
-4 - redirect 2>
-...
-?? - pipe ??

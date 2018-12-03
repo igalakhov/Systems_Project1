@@ -3,9 +3,8 @@
 #include <limits.h>
 #include <unistd.h>
 #include <signal.h>
-#include "argparser.h"
-#include "executor.h"
-
+#include "parser/argparser.h"
+#include "executor/executor.h"
 
 void new_line(){
   char working_dir[PATH_MAX];
@@ -24,7 +23,6 @@ static void sig_handler(int num){
 }
 
 int main(){
-
   // set sighandler
   signal(SIGINT, sig_handler);
 
@@ -43,20 +41,32 @@ int main(){
 
     // validate that input is valid
 
+
     // clear spaces and trim
     clear_multiple_spaces(command);
     trimstr(command);
 
+    //printf("\n[%s]\n", command);
+
+    char *** temp;
+
+    temp = build_command_array(command);
+
+
+    execute_command_array(temp);
+
     // build array of command strings
-    parsed_arr = parse_commands(command);
-
-    // execute the commands
-    execute_commands(parsed_arr);
-
-    // no leaks
-    free_command_array(&parsed_arr);
+    // parsed_arr = parse_commands(command);
+    //
+    // // execute the commands
+    // execute_commands(parsed_arr);
+    //
+    // // no leaks
+    // free_command_array(&parsed_arr);
 
     //break;
+    printf("\n");
+    //return 0;
   }
 
   return 0; // done

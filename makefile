@@ -1,16 +1,18 @@
-all: myshell.o argparser.o executor.o
+all: myshell.o ./parser/argparser.o ./executor/executor.o
 	gcc -o myshell myshell.o argparser.o executor.o
 	rm *.o
 
-myshell.o: myshell.c argparser.h
+myshell.o: myshell.c ./parser/argparser.h
 	gcc -c myshell.c
 
-argparser.o: argparser.c argparser.h
-	gcc -c argparser.c
+parser/argparser.o: ./parser/argparser.c ./parser/argparser.h
+	gcc -c ./parser/argparser.c
 
-executor.o: executor.c executor.h
-	gcc -c executor.c
+executor/executor.o: ./executor/executor.c ./executor/executor.h
+	gcc -c ./executor/executor.c
 
-# run
 run:
 	./myshell
+
+run-tests:
+	./myshell < tests
