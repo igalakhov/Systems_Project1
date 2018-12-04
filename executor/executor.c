@@ -14,9 +14,11 @@ void execute_command_array(char *** command_array){
   int stdout_temp, stdin_temp, stderr_temp;
   char ** args;
 
+  // turn off signal handler
+  signal(SIGINT, dummy_signal_handler);
+
   while(command_array[command_num]){ // go through each command
     pipe_num = 0;
-
 
     input_fd = STDIN_FILENO;
     while(command_array[command_num][pipe_num]){
@@ -35,7 +37,6 @@ void execute_command_array(char *** command_array){
       arg_num = 0;
       while(args[arg_num]){
         // first arg breaks everything
-
         if(arg_num){
           if(!strcmp(args[arg_num-1], ">")) setup_redirect(0, 0, args[arg_num], &file_fd);
           if(!strcmp(args[arg_num-1], "<")) setup_redirect(1, 2, args[arg_num], &file_fd);
@@ -43,6 +44,10 @@ void execute_command_array(char *** command_array){
           if(!strcmp(args[arg_num-1], "2>")) setup_redirect(2, 0, args[arg_num], &file_fd);
           if(!strcmp(args[arg_num-1], "2>>")) setup_redirect(2, 1, args[arg_num], &file_fd);
         }
+
+        // cut off command
+        if(file_fd)
+          args[arg_num-1] = NULL;
 
 
         //printf("\n[%s]\n", args[arg_num]);
@@ -87,10 +92,21 @@ void execute_command_array(char *** command_array){
 
       pipe_num++;
     }
+
+    // fix the file table and free up args
+    int i;
+
+    for(i = 0; args[i]; i++)
+      free(args[i]);
+
+    free(args);
+
+    for(i = 3; i < getdtablesize(); i++)
+      close(i);
+
     command_num++;
   }
 }
-
 void setup_redirect(int what, int how, char * name, int * where){
   int creation_possibilities[3] = {O_CREAT | O_WRONLY,
                             O_CREAT | O_WRONLY | O_APPEND,
@@ -103,36 +119,4 @@ void setup_redirect(int what, int how, char * name, int * where){
   dup2(*where, redirection_possibilities[what]);
 }
 
-// void execute_commands(char *** commands){
-//     //int errno;
-//     int status;
-//     // run through commands, forking off child processes
-//     char *** i = commands;
-//     char ** cur_command;
-//
-//     while((cur_command = *i)){
-//       // special cases
-//       if(!strcmp(cur_command[0], "exit")){
-//         printf("\n\x1B[31m[shell terminated]\x1B[0m\n\n");
-//         exit(0);
-//       } else if(!strcmp(cur_command[0], "cd")){
-//         if(chdir(cur_command[1]) == -1){
-//           // error
-//           printf("\x1B[31m%s\x1B[31m\n", strerror(errno));
-//         }
-//       } else {
-//         // fork and do the command
-//         if(!fork()){
-//           execvp(cur_command[0], cur_command);
-//           exit(errno); // error if it exists
-//         }
-//         wait(&status); // wait for child process to finish
-//         // print error
-//         if (WEXITSTATUS(status))
-//           printf("\x1B[31m%s\x1B[31m\n", strerror(WEXITSTATUS(status)));
-//       }
-//
-//       i++;
-//     }
-//
-// }
+void dummy_signal_handler(int n){}

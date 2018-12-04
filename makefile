@@ -12,7 +12,9 @@ executor/executor.o: ./executor/executor.c ./executor/executor.h
 	gcc -c ./executor/executor.c
 
 run:
+	clear
 	./myshell
 
 run-tests:
+	clear
 	./myshell < tests

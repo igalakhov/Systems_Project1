@@ -23,8 +23,6 @@ static void sig_handler(int num){
 }
 
 int main(){
-  // set sighandler
-  signal(SIGINT, sig_handler);
 
   printf("Hello! Welcome to the shell!\n\n");
 
@@ -33,6 +31,8 @@ int main(){
   char *** parsed_arr;
 
   while(1){
+    // set sighandler because executing the command array disables it
+    signal(SIGINT, sig_handler);
 
     new_line();
 
@@ -41,33 +41,17 @@ int main(){
 
     // validate that input is valid
 
-
     // clear spaces and trim
     clear_multiple_spaces(command);
     trimstr(command);
 
-    //printf("\n[%s]\n", command);
+    parsed_arr = build_command_array(command);
 
-    char *** temp;
+    execute_command_array(parsed_arr);
 
-    temp = build_command_array(command);
-
-
-    execute_command_array(temp);
-
-    // build array of command strings
-    // parsed_arr = parse_commands(command);
-    //
-    // // execute the commands
-    // execute_commands(parsed_arr);
-    //
-    // // no leaks
-    // free_command_array(&parsed_arr);
-
-    //break;
-    printf("\n");
-    //return 0;
+    // no leaks
+    free_command_array(parsed_arr);
   }
 
-  return 0; // done
+  return 0; // never happens
 }

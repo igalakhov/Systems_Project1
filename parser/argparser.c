@@ -1,5 +1,16 @@
 #include "argparser.h"
 
+void free_command_array(char *** command_array){
+  int i, j;
+
+  for(i = 0; command_array[i]; i++){
+    for(j = 0; command_array[i][j]; j++){
+      free(command_array[i][j]);
+    }
+    free(command_array[i]);
+  }
+  free(command_array);
+}
 
 char *** build_command_array(char * command){
 
@@ -139,84 +150,3 @@ void clear_multiple_spaces(char * command){
   free(temp);
   //printf("%s\n", command);
 }
-
-// // frees a command array
-// void free_command_array(char **** cmd_arr){
-//   char *** cmd = *cmd_arr;
-//   char *** next_cmd;
-//
-//   // free commands
-//   while(*cmd){
-//     next_cmd = cmd + 1;
-//     free(*cmd);
-//     cmd = next_cmd;
-//   }
-//
-//   // free the last one
-//   free(*cmd_arr);
-// }
-//
-// // parses args out of a command and returns the array
-// char ** parse_args(char * line){
-//   int num_args = 1;
-//   char * i = line;
-//   while(*i){
-//     num_args++;
-//     i++;
-//   }
-//
-//   char ** args = calloc(num_args + 1, sizeof(line)); // maximum number of args is 5, with maximum size of line
-//                                           // also one at the end for the NULL
-//   char * line_copy = malloc(sizeof(line));
-//   strcpy(line_copy, line);
-//
-//   int c = 0;
-//   while((args[c] = strsep(&line_copy, " ")) && ++c);
-//
-//   return args;
-// }
-//
-// // parses commands out of a string and returns a pointer to a null terminated array with it
-// char *** parse_commands(char * cmd){
-//   //printf("[%s]\n", cmd);
-//
-//   // count the number of ';'. The largest number of commands we are given is that number plus 1
-//   int num_commands = 1;
-//   char * p = cmd;
-//   while(*p){
-//     if(*p == ';')
-//       num_commands++;
-//     p++;
-//   }
-//
-//   //printf("Num commands: %d\n", num_commands);
-//
-//   // this is what we're returning
-//   char *** parsed_commands = calloc(sizeof(char ***), (num_commands + 1));
-//
-//   // split the string by ';'
-//   char * cmd_cpy = malloc(strlen(cmd) + 1);
-//   strcpy(cmd_cpy, cmd);
-//
-//   char * cur;
-//   char * curcmd;
-//   int i = 0;
-//
-//   for(cur = strtok(cmd_cpy, ";"); cur != NULL; cur = strtok(NULL, ";")){
-//     // current command
-//     curcmd = malloc(sizeof(char) * (strlen(cur) + 1));
-//     strcpy(curcmd, cur);
-//     trimstr(curcmd);
-//     parsed_commands[i] = parse_args(curcmd);
-//
-//     // only increment if we wrote something
-//     if(parsed_commands[i][0][0])
-//       i++;
-//   }
-//
-//   //printf("%s\n", cmd_cpy);
-//
-//
-//
-//   return parsed_commands;
-// }
